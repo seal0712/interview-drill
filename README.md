@@ -1,6 +1,6 @@
 # 面試練習工具（interview-drill）
 
-上傳你交給學校的審查資料（自傳、讀書計畫、作品集），讓你自己選的 AI 扮演口試委員：依資料出題、批改你的口頭回答、追問。手機打開網址就能練，也可以在電腦上執行，搭配免費的本機模型。
+上傳你交給學校的審查資料（自傳、讀書計畫、作品集），讓你自己選的 AI 扮演口試委員：依資料出題、批改你的口頭回答、追問。手機打開網址就能練，也可以在電腦上執行，搭配免費的本機模型；只有 ChatGPT 訂閱的人，也能把它設定成 ChatGPT 專案來用。
 
 A provider-agnostic mock-interview tool for graduate admission oral exams (Traditional Chinese UI). Upload your application documents, and an AI of your choice (OpenAI-compatible APIs or Anthropic; local models via LM Studio / Ollama in the desktop version) generates questions, grades your spoken answers, and asks follow-ups. Use it on your phone as a web page, or run it locally with Python.
 
@@ -24,6 +24,8 @@ A provider-agnostic mock-interview tool for graduate admission oral exams (Tradi
 | AI 服務 | 雲端服務（OpenAI、Gemini、DeepSeek、OpenRouter、Anthropic） | 雲端服務，加上本機的 LM Studio、Ollama |
 
 兩種用法的畫面和功能都一樣，資料可以用「備份與搬家」互相搬。
+
+**只有 ChatGPT 訂閱、沒有 API key？** 打開 <https://seal0712.github.io/interview-drill/chatgpt.html>，照五個步驟在 ChatGPT 建一個「專案」：貼上一段專案指令、上傳規則檔和你的審查資料，之後在專案裡說「出題」「抽一題」就能練，用的是你自己的訂閱額度，免費版也可以。這個做法沒有倒數計時和錯題本勾選介面，但委員的出題、批改、追問規則和網頁版相同（規則檔是 `web/committee-rules.md`）。
 
 ### 網頁版
 

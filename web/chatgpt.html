@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ChatGPT 專案練口試</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC:wght@400;700&family=Noto+Sans+TC:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="style.css">
+<style>
+/* 用 ChatGPT 訂閱練口試的設定說明：步驟、可複製的專案指令、規則檔下載 */
+ol.steps { margin: 0; padding-left: 1.3em; display: grid; gap: 18px; }
+ol.steps > li::marker { font-weight: 700; color: var(--accent); }
+ol.steps h2 { font-size: 18px; margin: 0 0 6px; }
+ol.steps p { margin: 0 0 8px; }
+pre.copy { white-space: pre-wrap; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; margin: 0 0 8px; font: inherit; font-size: 14.5px; line-height: 1.8; }
+table.cmd { border-collapse: collapse; width: 100%; font-size: 14.5px; }
+table.cmd td { border-top: 1px solid var(--line); padding: 6px 8px 6px 0; vertical-align: top; }
+table.cmd td:first-child { white-space: nowrap; font-weight: 700; color: var(--accent); }
+a { color: var(--accent); }
+a.btn { text-decoration: none; display: inline-block; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <h1>用 ChatGPT 專案練口試</h1>
+    <p class="hint">已經有 ChatGPT（免費版或 Plus 都可以）、不想另外申請 API key 的話，照下面五步設定一次，之後在 ChatGPT 裡就有一位依你的審查資料出題、批改、追問的口試委員。想要倒數計時、錯題本勾選這些介面，請改用<a href="./">網頁版</a>。</p>
+  </header>
+
+  <ol class="steps">
+    <li>
+      <h2>下載規則檔</h2>
+      <p>這個檔案寫著委員怎麼出題、批改、追問，等一下要上傳到專案裡。</p>
+      <div class="row"><a class="btn primary" href="committee-rules.md" download="口試委員規則.md">下載「口試委員規則.md」</a></div>
+    </li>
+    <li>
+      <h2>在 ChatGPT 建一個專案</h2>
+      <p>手機 App：點左上角選單，找到「專案」，新增一個專案，名稱可以叫「口試練習」。電腦版：左側欄的「新專案」。按鈕名稱可能因版本略有不同。</p>
+    </li>
+    <li>
+      <h2>貼上專案指令</h2>
+      <p>打開專案的設定，找到「指令」欄位，貼上下面這段，再把【我的面試資訊】填好。</p>
+      <pre class="copy" id="instr">你是我的碩士班甄試口試委員兼教練。請依照專案檔案「口試委員規則」運作：出題、抽題、批改、追問、錯題本的做法都在裡面，一律用繁體中文。
+
+【我的面試資訊】
+學校系所與面試日期：（例：某某大學資訊管理研究所，11/20；多間學校就一行一間）
+口試形式與重點：（可貼簡章上的口試說明，沒有就留空）
+補充背景檔案：（委員看不到、只用來核對事實的檔名，沒有就寫「無」；其他檔案都當作審查資料）
+口徑提醒：（不能講或要注意的說法，一行一條，沒有就寫「無」）</pre>
+      <div class="row"><button class="btn primary" id="copyBtn">複製這段指令</button></div>
+      <p class="hint" id="copyMsg"></p>
+    </li>
+    <li>
+      <h2>上傳檔案到專案</h2>
+      <p>在專案裡新增檔案：<b>口試委員規則.md</b>，加上你交給學校的審查資料（自傳、讀書計畫、作品集，PDF 或 Word 都可以）。有補充背景（例如專案完整紀錄）也可以一起放，記得在指令裡寫上它的檔名。</p>
+      <p class="hint">免費版每個專案最多放 5 個檔案，Plus 最多 25 個。檔案太多時，可以把幾份文件合併成一個 PDF。掃描檔讀不到字，請用可以選取文字的檔案。</p>
+    </li>
+    <li>
+      <h2>在專案裡開新對話</h2>
+      <p>說「出題」，委員會先依你的資料整理題庫；之後說「抽一題」開始練。回答時用鍵盤上的麥克風說出來就好。</p>
+      <table class="cmd">
+        <tr><td>出題</td><td>依審查資料逐段出題，附事實卡與出處</td></tr>
+        <tr><td>抽一題／下一題</td><td>委員只問題目，等你回答</td></tr>
+        <tr><td>看提示</td><td>講不出來時，看這一題的事實卡</td></tr>
+        <tr><td>第 N 題、只練〇〇</td><td>指定題號或主題</td></tr>
+        <tr><td>（直接回答）</td><td>批改：講錯、漏掉的重點、口徑、建議、口頭禪，可能再追問</td></tr>
+        <tr><td>錯題本</td><td>整理這個對話裡還沒改好的地方</td></tr>
+        <tr><td>換學校〇〇</td><td>改用另一間學校的委員身分</td></tr>
+      </table>
+    </li>
+  </ol>
+
+  <section class="step">
+    <h2>小提醒</h2>
+    <ul class="facts">
+      <li>同一次練習盡量在同一個對話裡進行，「錯題本」才整理得到前面的題目。</li>
+      <li>委員只給改進方向，不會給範本答案；追問要不要回答由你決定，同一題最多追問 2 次。</li>
+      <li>AI 可能記錯資料，事實卡上的出處可以回原檔核對。</li>
+      <li>你的資料會上傳到 ChatGPT，依你帳號的資料設定處理。</li>
+    </ul>
+  </section>
+</div>
+<script>
+document.getElementById("copyBtn").onclick = async () => {
+  const msg = document.getElementById("copyMsg");
+  try {
+    await navigator.clipboard.writeText(document.getElementById("instr").textContent);
+    msg.textContent = "已複製，到 ChatGPT 專案的「指令」欄位貼上。";
+  } catch (e) {
+    msg.textContent = "這個瀏覽器不能自動複製，請長按上面的文字手動複製。";
+  }
+};
+</script>
+</body>
+</html>

@@ -6,6 +6,7 @@
 - `run.py`、`start.bat`、`start.sh`：啟動入口（bat／sh 第一次會自動建 .venv 並安裝 requirements.txt）
 - `app/`：後端（`server.py` 路由、出題工作與批改；`ai.py` OpenAI 相容／Anthropic 兩種接法；`extract.py` 讀檔與遮蔽個資；`prompts.py` 提示詞；`store.py` 存取 data/）
 - `web/`：前端兼網頁版（`app.js` 畫面，由原抽題卡改寫；`backend.js` 網頁版後端，找不到本機伺服器時在瀏覽器裡出題批改、存 IndexedDB；`prompts.json` 兩個後端共用的提示詞）
+- `web/chatgpt.html`＋`web/committee-rules.md`：只有 ChatGPT 訂閱的人用的設定頁與委員規則檔（ChatGPT 專案：指令 222 字＋規則檔當專案檔案）
 - `.github/workflows/pages.yml`：推上 main 時把 web/ 發布到 GitHub Pages
 - `examples/`：虛構人物的範例資料，測試用
 - `data/`：使用者的設定、API key、上傳資料、題庫、練習紀錄（gitignore，絕不進 git）
@@ -24,6 +25,7 @@
 - 網頁版驗證：靜態伺服器模擬 GitHub Pages，自動判斷網頁模式；上傳 md／PDF（含未內嵌與內嵌中文字型）／docx、出題、批改、追問上限、匯出、Python 版備份匯入網頁版都通過；390／360 寬手機版面實測作答與批改正常；Python 版回歸測試通過
 - start.bat 必須維持純 ASCII（中文會讓 cmd 解析錯亂，已踩過）
 - 10/28 已公開：https://github.com/seal0712/interview-drill （建 repo 與開 Pages 被 auto mode 擋下，由使用者用 ! 指令親自執行）；網頁版 https://seal0712.github.io/interview-drill/ 部署成功，線上實測網頁模式、PDF 讀取與遮蔽正常
-- 未驗證：真實雲端 API 實際呼叫（只做 CORS 預檢）、真手機（iPhone Safari／Android Chrome）
+- 10/28 使用者要能用 ChatGPT 訂閱：查證自訂 GPT 個人帳號已不能建立、12/11 退役，plugins 個人無法分享 → 改做「ChatGPT 專案」設定頁＋規則檔；用 qwen3-14b 模擬專案對話修了三輪（抽題洩漏事實卡、判定多選、錯題本編造），抽題範例保留「〔題號〕（題目…）」那版（連抽 4 題全對，改成文字描述反而變差）
+- 未驗證：真實雲端 API 實際呼叫（只做 CORS 預檢）、真手機（iPhone Safari／Android Chrome）、真的 ChatGPT 專案（只用本機小模型模擬）
 - 下一步：請朋友用真手機與自己的 API key 實測，回報問題再修；之後推新 commit 時同樣先問使用者
 - 一段工作做完，把這一節更新成最新狀態
