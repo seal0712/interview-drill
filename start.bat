@@ -1,10 +1,24 @@
 @echo off
-chcp 65001 >nul
+rem Windows launcher: double-click to start. First run creates .venv and installs requirements.
 cd /d "%~dp0"
-if not exist .venv\Scripts\python.exe (
-  echo 第一次啟動：正在建立執行環境並安裝套件，大約需要一兩分鐘……
-  python -m venv .venv || (echo 找不到 Python，請先到 https://www.python.org 安裝 Python 3.10 以上版本，安裝時勾選 Add python.exe to PATH。& pause & exit /b 1)
-  .venv\Scripts\python -m pip install -q -r requirements.txt || (echo 套件安裝失敗，請確認網路連線後再試一次。& pause & exit /b 1)
-)
+if exist .venv\Scripts\python.exe goto run
+echo First run: creating the environment and installing packages (about 1-2 minutes)...
+python -m venv .venv
+if errorlevel 1 goto nopython
+.venv\Scripts\python -m pip install -q -r requirements.txt
+if errorlevel 1 goto nopip
+:run
 .venv\Scripts\python run.py
 pause
+exit /b
+:nopython
+echo Python was not found. Install Python 3.10 or later from https://www.python.org
+echo and tick "Add python.exe to PATH" during installation.
+if exist .venv rmdir /s /q .venv
+pause
+exit /b 1
+:nopip
+echo Package installation failed. Check your internet connection and run start.bat again.
+rmdir /s /q .venv
+pause
+exit /b 1
