@@ -16,5 +16,8 @@
 - 測試用 `INTERVIEW_DRILL_DATA=<scratchpad 路徑>` 指定資料夾，不要寫進專案的 data/
 
 ## 目前進度（2026-10-28）
-- 第一版完成：後端 API 以假 AI 服務跑通整個流程；下一步：瀏覽器實測畫面、LM Studio 實測、README
+- 第一版完成並驗證：假 AI 服務跑通全部 API；瀏覽器實測設定精靈→上傳→出題→批改→追問→錯題本→讀資料；LM Studio qwen3-14b 實測（範例資料出 9 題 48 秒、批改 12 秒，抓到數字錯與口徑，漏抓跨文件矛盾）；乾淨 clone 雙擊 start.bat 約 36 秒裝好並啟動；個資 grep 零筆
+- start.bat 必須維持純 ASCII（中文會讓 cmd 解析錯亂，已踩過）
+- 未驗證：手機寬度版面（伺服器只聽本機，主要在電腦用）、雲端 API 實際呼叫（OpenAI／Gemini／Anthropic 都沒有實打過，只有 SDK 參數檢查）
+- 下一步：使用者看過後決定是否推上 GitHub（推之前再 grep 一次個資、建 repo seal0712/interview-drill）
 - 一段工作做完，把這一節更新成最新狀態
