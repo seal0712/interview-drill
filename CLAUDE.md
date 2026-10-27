@@ -23,6 +23,7 @@
 - 10/28 使用者說朋友要用手機 → 加網頁版（使用者選「A 純網頁版＋保留 Python 版」）：畫面共用、提示詞抽成 prompts.json（新舊輸出 7 組情境比對相同）、新增備份與搬家（匯出不含 API key、匯入不動 AI 設定）
 - 網頁版驗證：靜態伺服器模擬 GitHub Pages，自動判斷網頁模式；上傳 md／PDF（含未內嵌與內嵌中文字型）／docx、出題、批改、追問上限、匯出、Python 版備份匯入網頁版都通過；390／360 寬手機版面實測作答與批改正常；Python 版回歸測試通過
 - start.bat 必須維持純 ASCII（中文會讓 cmd 解析錯亂，已踩過）
-- 未驗證：真實雲端 API 實際呼叫（只做 CORS 預檢，五家都允許網頁呼叫）、真手機（iPhone Safari／Android Chrome）、GitHub Pages 實際部署
-- 下一步：使用者同意後推上 GitHub（推之前 grep 個資）、到 repo 設定開 Pages（Source：GitHub Actions），部署後用真手機測一次
+- 10/28 已公開：https://github.com/seal0712/interview-drill （建 repo 與開 Pages 被 auto mode 擋下，由使用者用 ! 指令親自執行）；網頁版 https://seal0712.github.io/interview-drill/ 部署成功，線上實測網頁模式、PDF 讀取與遮蔽正常
+- 未驗證：真實雲端 API 實際呼叫（只做 CORS 預檢）、真手機（iPhone Safari／Android Chrome）
+- 下一步：請朋友用真手機與自己的 API key 實測，回報問題再修；之後推新 commit 時同樣先問使用者
 - 一段工作做完，把這一節更新成最新狀態
