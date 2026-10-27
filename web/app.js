@@ -450,7 +450,7 @@ function renderSetup() {
     <p class="hint">支援 PDF（要能選取文字，掃描檔讀不到）、Word（.docx）、Markdown、純文字。上傳時會自動遮掉 Email、手機與市話號碼、身分證字號。</p>
     <p class="hint"><b>審查資料</b>：你實際交給學校的東西（自傳、讀書計畫、作品集、成績單摘要），委員看得到，題目從這裡出。<br><b>補充背景</b>：委員看不到、但你想讓 AI 核對事實用的資料（例如專案完整紀錄），不會拿來出題。</p>
     ${schools().length ? `<div class="grid2">
-      <label class="field"><span>這次上傳的是</span><select id="u-kind"><option value="review">審查資料（委員看得到）</option><option value="background">補充背景（只供核對）</option></select></label>
+      <label class="field"><span>這次上傳的是</span><select id="u-kind"><option value="review">審查資料（委員看得到）</option><option value="background"${ui.uploadKind === "background" ? " selected" : ""}>補充背景（只供核對）</option></select></label>
       ${schools().length > 1 ? `<div class="field"><span>交給哪些學校（都不勾＝全部）</span><div class="chips">${schools().map(s => `<label class="chk"><input type="checkbox" data-usch="${s.id}"> ${esc(s.short || s.name)}</label>`).join("")}</div></div>` : ""}
     </div>
     <label class="field"><span>選擇檔案（可以一次選多個）</span><input id="u-file" type="file" multiple accept=".pdf,.docx,.md,.txt"></label>` : `<p class="hint err">請先完成第 2 步，填好要面試的學校。</p>`}
@@ -522,7 +522,7 @@ function bindSetup() {
   }));
   const file = document.getElementById("u-file");
   if (file) file.onchange = () => act("upload", async () => {
-    const kind = document.getElementById("u-kind").value;
+    const kind = ui.uploadKind = document.getElementById("u-kind").value;
     const sch = [...document.querySelectorAll("[data-usch]:checked")].map(x => x.dataset.usch);
     const files = [...file.files];
     for (const [i, f] of files.entries()) {
@@ -555,9 +555,12 @@ function bindSetup() {
 async function pollJob() {
   try { S.job = await api("/api/job"); } catch (e) { setTimeout(pollJob, 3000); return; }
   if (S.job.running) { renderJob(); setTimeout(pollJob, 1500); return; }
+  const first = !QS.length;
   await load();
   initFilters(); newQuestion(); renderDates(); renderStats(); gateTabs();
   collectSetup(); renderSetup();
+  // 第一次出題完成就直接帶到「讀資料」
+  if (first && QS.length) { showTab("read"); window.scrollTo(0, 0); }
 }
 
 /* ---------- 共用 ---------- */

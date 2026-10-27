@@ -1,4 +1,5 @@
 /* 單欄練習台：上方倒數與篩選，中間一張題卡（正面題目、背面事實卡），其他分頁為讀資料、錯題本、題庫與設定 */
+[hidden] { display: none !important; }
 :root {
   --bg: #f3f5f3; --surface: #ffffff; --ink: #17211f; --muted: #5a6661; --line: #d8dedb;
   --accent: #1d6b63; --accent-soft: #e0eeeb; --warn: #9c4318; --warn-soft: #fbede4;
