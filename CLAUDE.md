@@ -1,6 +1,6 @@
 # 面試練習工具 入口
 
-把推甄口試抽題卡（`Desktop\推甄\09_面試準備\口試抽題卡.html`）改寫成不綁 Claude、可在任何電腦重現的開源工具，預計公開到 GitHub `seal0712/interview-drill`。使用者第一次打開時上傳自己的審查資料，由自己選的 AI 出題與批改。沒有截止日。
+把推甄口試抽題卡（`Desktop\推甄\09_面試準備\口試抽題卡.html`）改寫成不綁 Claude 的開源工具，預計公開到 GitHub `seal0712/interview-drill`。兩種用法：網頁版（GitHub Pages，手機打開網址就能用，資料存在瀏覽器）與 Python 版（本機伺服器，可接 LM Studio）。使用者第一次打開時上傳自己的審查資料，由自己選的 AI 出題與批改。沒有截止日。
 
 ## 資料夾地圖
 - `run.py`、`start.bat`、`start.sh`：啟動入口（bat／sh 第一次會自動建 .venv 並安裝 requirements.txt）
