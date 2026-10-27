@@ -5,7 +5,13 @@ const ui = { school: "all", cat: "all", onlyStuck: false, tab: "setup", sec: nul
   rounds: [], draft: "", grading: false, gradeErr: "", clockText: "0:00", attempt: null };
 const MAX_FOLLOW = 2;   // 第一次回答之後最多追問 2 次，而且每次都要考生自己選擇回答
 
+// 有本機 Python 伺服器就用它；沒有（例如放在 GitHub Pages、用手機打開）就改用 backend.js 在瀏覽器裡處理
+let LOCAL = null;
+async function hasServer() {
+  try { const r = await fetch("/api/state"); return r.ok && (r.headers.get("content-type") || "").includes("json"); } catch (e) { return false; }
+}
 async function api(path, body) {
+  if (LOCAL) return LOCAL.call(path, body);
   let r;
   try {
     r = await fetch(path, body === undefined ? {} : { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
@@ -15,6 +21,13 @@ async function api(path, body) {
   return j;
 }
 async function load() {
+  if (LOCAL === null) {
+    LOCAL = (await hasServer()) ? false : LocalBackend;
+    if (LOCAL) {
+      syncNote = "練習紀錄存在這個瀏覽器裡，記得偶爾到「設定」匯出備份。";
+      try { navigator.storage.persist(); } catch (e) {}   // 請瀏覽器不要自動清掉資料
+    }
+  }
   S = await api("/api/state");
   QS = S.bank ? S.bank.questions : [];
   SECTIONS = S.bank ? S.bank.sections : [];
@@ -27,7 +40,7 @@ let saveTimer = null, syncNote = "練習紀錄存在這台電腦的 data 資料�
 function persist() {
   clearTimeout(saveTimer);
   saveTimer = setTimeout(() => api("/api/progress", { progress }).catch(() => {
-    syncNote = "練習紀錄沒存成功，請確認啟動程式的視窗還開著。"; renderStats();
+    syncNote = LOCAL ? "練習紀錄沒存成功，瀏覽器可能不允許存資料。" : "練習紀錄沒存成功，請確認啟動程式的視窗還開著。"; renderStats();
   }), 300);
 }
 // 錯題本：每題只看最近一次有批改的紀錄
@@ -400,7 +413,7 @@ const PRESETS = [
   ["Ollama（本機，免費）", "openai", "http://localhost:11434/v1", true],
   ["Anthropic（Claude）", "anthropic", ""],
 ];
-let cfgDraft = null, profDraft = null, setupMsg = {};
+let cfgDraft = null, profDraft = null, setupMsg = {}, pendingImport = null;
 function collectSetup() {
   const val = id => { const el = document.getElementById(id); return el ? el.value : undefined; };
   if (!cfgDraft || !document.getElementById("c-model")) return;
@@ -419,19 +432,21 @@ function renderSetup() {
   const step = (i, title, body) => `<section class="step${ok[i - 1] ? " ok" : ""}"><h2>${i}. ${title}${ok[i - 1] ? `<span class="pill st-ok">完成</span>` : ""}</h2>${body}</section>`;
   let h = `<div class="list">`;
   h += step(1, "AI 服務", `
-    <p class="hint">出題和批改都要呼叫 AI。選一家服務，填 API key 與模型名稱。key 只存在這台電腦的 data 資料夾。用本機的 LM Studio 或 Ollama 不用 key、也不用錢，但出題與批改品質會比雲端大模型弱。</p>
-    <div class="chips">${PRESETS.map((p, i) => `<button class="btn mini" data-preset="${i}">${esc(p[0])}</button>`).join("")}</div>
+    <p class="hint">${LOCAL
+      ? "出題和批改都要呼叫 AI。選一家服務，填 API key 與模型名稱。key 只存在這個瀏覽器裡，不會傳到 AI 服務以外的地方；不要在別人的手機或公用電腦上填。想用免費的本機模型（LM Studio、Ollama），請改用電腦上的 Python 版。"
+      : "出題和批改都要呼叫 AI。選一家服務，填 API key 與模型名稱。key 只存在這台電腦的 data 資料夾。用本機的 LM Studio 或 Ollama 不用 key、也不用錢，但出題與批改品質會比雲端大模型弱。"}</p>
+    <div class="chips">${PRESETS.map((p, i) => LOCAL && p[3] ? "" : `<button class="btn mini" data-preset="${i}">${esc(p[0])}</button>`).join("")}</div>
     <div class="grid2">
       <label class="field"><span>介面類型</span><select id="c-provider">
         <option value="openai"${c.provider !== "anthropic" ? " selected" : ""}>OpenAI 相容</option>
         <option value="anthropic"${c.provider === "anthropic" ? " selected" : ""}>Anthropic</option></select></label>
       <label class="field"><span>API 網址（Anthropic 留空）</span><input id="c-base_url" value="${esc(c.base_url)}" placeholder="例如 https://api.openai.com/v1"></label>
-      <label class="field"><span>API key</span><input id="c-api_key" type="password" value="${esc(c.api_key)}" placeholder="${S.config.has_key ? "已儲存（留空表示不變）" : "本機模型可以留空"}" autocomplete="off"></label>
+      <label class="field"><span>API key</span><input id="c-api_key" type="password" value="${esc(c.api_key)}" placeholder="${S.config.has_key ? "已儲存（留空表示不變）" : LOCAL ? "貼上服務商給你的 key" : "本機模型可以留空"}" autocomplete="off"></label>
       <label class="field"><span>模型名稱</span><input id="c-model" value="${esc(c.model)}" list="modelList" placeholder="按「讀取模型清單」或自己填"><datalist id="modelList">${(setupMsg.models || []).map(m => `<option value="${esc(m)}">`).join("")}</datalist></label>
       <label class="field"><span>思考深度（只有 Claude 用得到）</span><select id="c-effort">${["", "low", "medium", "high", "xhigh", "max"].map(e => `<option value="${e}"${c.effort === e ? " selected" : ""}>${e || "不指定"}</option>`).join("")}</select></label>
       <label class="field"><span>一次最多送給 AI 的字數</span><input id="c-max_chars" type="number" min="4000" step="1000" value="${esc(c.max_chars)}"></label>
     </div>
-    <p class="hint">字數上限：雲端大模型用 60000 即可；本機模型建議 8000，並把 LM Studio 的 context length 調到 16384 以上。資料超過上限時，批改只會送這題相關的段落。</p>
+    <p class="hint">字數上限：雲端大模型用 60000 即可${LOCAL ? "" : "；本機模型建議 8000，並把 LM Studio 的 context length 調到 16384 以上"}。資料超過上限時，批改只會送這題相關的段落。</p>
     <div class="row"><button class="btn primary" id="saveCfg">儲存</button><button class="btn" id="listModels">讀取模型清單</button><button class="btn" id="testAI">測試連線</button></div>
     ${msg("cfg")}`);
   h += step(2, "面試資訊", `
@@ -461,7 +476,15 @@ function renderSetup() {
   h += step(4, "產生題庫", `
     <p class="hint">AI 會把審查資料切成一段一段，每段出 2～4 題，再替每個學校出綜合題（自我介紹、動機、弱點等）。用雲端模型通常幾分鐘內完成；本機模型可能要十幾分鐘。${S.bank ? `<br>目前題庫：${QS.length} 題（${esc((S.bank.generated_at || "").replace("T", " "))} 產生，模型 ${esc(S.bank.model)}）。資料有更新再重新產生；舊題目的練習紀錄不會沿用。` : ""}</p>
     <div class="row"><button class="btn primary" id="genBtn"${j.running ? " disabled" : ""}>${j.running ? "出題中…" : S.bank ? "重新產生題庫" : "產生題庫"}</button></div>
+    ${LOCAL ? `<p class="hint">出題時請留在這個頁面，不要切到別的 App；手機請保持螢幕亮著。</p>` : ""}
     <div id="jobBox"></div>${msg("gen")}`);
+  h += `<section class="step"><h2>5. 備份與搬家（選用）</h2>
+    <p class="hint">備份檔包含上傳的資料、題庫和練習紀錄，<b>不含</b> AI 設定與 API key。也可以拿來搬家，例如在電腦上用免費的本機模型出好題，再匯入手機練。${LOCAL ? "<br>網頁版的資料只存在這個瀏覽器：清除瀏覽紀錄就會不見，iPhone 太久沒打開也可能被清掉，建議加入主畫面並定期匯出。" : ""}</p>
+    <div class="row"><button class="btn" id="exportBtn">匯出備份檔</button></div>
+    <label class="field"><span>匯入備份檔（會取代目前的資料）</span><input id="importFile" type="file" accept=".json,application/json"></label>
+    ${pendingImport ? `<div class="warnbox"><p>要用「${esc(pendingImport.name)}」（${esc((pendingImport.data.exported_at || "").replace("T", " "))} 匯出，${(pendingImport.data.bank && pendingImport.data.bank.questions || []).length} 題）取代目前的資料嗎？目前的題庫和練習紀錄會被蓋掉。</p>
+      <div class="row" style="margin-top:8px"><button class="btn primary" id="importBtn">確定匯入</button><button class="btn" id="importCancel">取消</button></div></div>` : ""}
+    ${msg("backup")}</section>`;
   document.getElementById("view-setup").innerHTML = h + `</div>`;
   renderJob();
   bindSetup();
@@ -543,6 +566,36 @@ function bindSetup() {
       setMsg("upload", "已刪除。");
     });
   });
+  on("exportBtn", () => act("backup", async () => {
+    const data = await api("/api/export", {});
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([JSON.stringify(data)], { type: "application/json" }));
+    a.download = `面試練習備份_${new Date().toISOString().slice(0, 10)}.json`;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 10000);
+    setMsg("backup", "已匯出，檔案在下載資料夾（手機在「檔案」或下載紀錄裡）。");
+  }));
+  const imp = document.getElementById("importFile");
+  if (imp) imp.onchange = () => act("backup", async () => {
+    const f = imp.files[0];
+    if (!f) return;
+    let data;
+    try { data = JSON.parse(await f.text()); } catch (e) { throw new Error("這個檔案不是正確的備份檔。"); }
+    if (!data || data.app !== "interview-drill") throw new Error("這不是面試練習工具的備份檔。");
+    pendingImport = { name: f.name, data };
+    delete setupMsg.backup;
+  });
+  on("importCancel", () => { pendingImport = null; collectSetup(); renderSetup(); });
+  on("importBtn", () => act("backup", async () => {
+    await api("/api/import", { data: pendingImport.data });
+    pendingImport = null;
+    const first = !QS.length;
+    await load();
+    profDraft = JSON.parse(JSON.stringify(S.profile));
+    initFilters(); newQuestion(); renderDates(); renderStats(); gateTabs();
+    setMsg("backup", `匯入完成，共 ${QS.length} 題。`);
+    if (first && QS.length) setTimeout(() => { showTab("read"); window.scrollTo(0, 0); });
+  }));
   on("genBtn", e => {
     if (S.bank && !sure(e.currentTarget, "會取代目前的題庫，確定嗎？再按一次")) return;
     act("gen", async () => {

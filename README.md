@@ -1,8 +1,8 @@
 # 面試練習工具（interview-drill）
 
-上傳你交給學校的審查資料（自傳、讀書計畫、作品集），讓你自己選的 AI 扮演口試委員：依資料出題、批改你的口頭回答、追問。全部在自己的電腦上執行，資料只會送到你選的 AI 服務。
+上傳你交給學校的審查資料（自傳、讀書計畫、作品集），讓你自己選的 AI 扮演口試委員：依資料出題、批改你的口頭回答、追問。手機打開網址就能練，也可以在電腦上執行，搭配免費的本機模型。
 
-A local, provider-agnostic mock-interview tool for graduate admission oral exams (Traditional Chinese UI). Upload your application documents, and an AI of your choice (OpenAI-compatible APIs, Anthropic, or a local model via LM Studio / Ollama) generates questions, grades your spoken answers, and asks follow-ups.
+A provider-agnostic mock-interview tool for graduate admission oral exams (Traditional Chinese UI). Upload your application documents, and an AI of your choice (OpenAI-compatible APIs or Anthropic; local models via LM Studio / Ollama in the desktop version) generates questions, grades your spoken answers, and asks follow-ups. Use it on your phone as a web page, or run it locally with Python.
 
 ## 功能
 
@@ -12,24 +12,40 @@ A local, provider-agnostic mock-interview tool for graduate admission oral exams
 - **錯題本**：每題最近一次的批改意見逐條列出，想通了就勾掉；重練時會提醒上次沒改好的地方。
 - **題庫**：AI 出的所有題目、事實卡與出處。不像委員會問的題目可以刪掉。
 - **多校**：可以同時準備好幾間學校，各校的審查資料、面試日期與口試形式分開設定。
+- **備份與搬家**：匯出備份檔，可以換手機、換電腦，或在電腦上用本機模型出好題再匯入手機。
 
-## 需要準備
+## 兩種用法
 
-1. **Python 3.10 以上**：到 <https://www.python.org/downloads/> 下載。Windows 安裝時要勾選「Add python.exe to PATH」。
-2. **一個 AI 服務**，以下擇一：
-   - 雲端服務的 API key（OpenAI、Google Gemini、DeepSeek、OpenRouter、Anthropic 等）。依用量付費。
-   - 本機模型：[LM Studio](https://lmstudio.ai/) 或 [Ollama](https://ollama.com/)。免費，但出題與批改品質比雲端大模型弱，電腦也要夠力。
+| | 網頁版 | Python 版 |
+|---|---|---|
+| 適合 | 用手機練、不想裝東西 | 想用免費的本機模型，或想把資料存成資料夾 |
+| 怎麼開 | 打開 <https://seal0712.github.io/interview-drill/> | 下載後雙擊 `start.bat`（Windows）或執行 `sh start.sh`（macOS／Linux） |
+| 資料存放 | 這支手機（或這台電腦）的瀏覽器裡 | 專案的 `data/` 資料夾 |
+| AI 服務 | 雲端服務（OpenAI、Gemini、DeepSeek、OpenRouter、Anthropic） | 雲端服務，加上本機的 LM Studio、Ollama |
 
-## 安裝與啟動
+兩種用法的畫面和功能都一樣，資料可以用「備份與搬家」互相搬。
 
-先下載這個專案：按 GitHub 頁面上的綠色「Code」→「Download ZIP」並解壓縮。會用 git 的話也可以 `git clone`。
+### 網頁版
 
-- **Windows**：在資料夾裡雙擊 `start.bat`。
-- **macOS／Linux**：在資料夾裡開終端機，執行 `sh start.sh`。
+1. 用手機瀏覽器打開 <https://seal0712.github.io/interview-drill/>。
+2. **建議加入主畫面**，之後就像 App 一樣點開。iPhone 用 Safari 按「分享」→「加入主畫面」；Android 用 Chrome 按右上角選單 →「加到主畫面」。
+3. 照下面「第一次使用」的四個步驟設定。
 
-第一次啟動會自動建立執行環境並安裝套件，大約需要一兩分鐘。完成後瀏覽器會自動打開 <http://127.0.0.1:8765/>。之後每次使用都一樣雙擊啟動；要結束時，回到黑色視窗按 `Ctrl+C`。
+注意事項：
+- 資料只存在這個瀏覽器裡，**手機和電腦不會自動同步**。清除瀏覽紀錄會讓資料消失，iPhone 太久沒打開也可能被系統清掉，所以請偶爾到「設定」第 5 步匯出備份。
+- API key 也存在這個瀏覽器裡，只會送到你選的 AI 服務。不要在別人的手機或公用電腦上填。
+- 出題要幾分鐘，這段時間請留在頁面上，螢幕保持亮著。
+- 讀 PDF 和 Word 檔時，會從網路下載讀檔元件，所以上傳資料時要有網路。
 
-想自己手動安裝的話：
+### Python 版
+
+需要 **Python 3.10 以上**，到 <https://www.python.org/downloads/> 下載。Windows 安裝時要勾選「Add python.exe to PATH」。
+
+1. 下載這個專案：按 GitHub 頁面上的綠色「Code」→「Download ZIP」，下載後解壓縮。會用 git 的話也可以 `git clone`。
+2. Windows 雙擊 `start.bat`；macOS／Linux 在資料夾裡開終端機，執行 `sh start.sh`。
+3. 第一次啟動會自動建立執行環境並安裝套件，大約需要一兩分鐘。完成後瀏覽器會自動打開 <http://127.0.0.1:8765/>。要結束時，回到黑色視窗按 `Ctrl+C`。
+
+想手動安裝的話：
 
 ```
 python -m venv .venv
@@ -41,7 +57,7 @@ python -m venv .venv
 
 打開後會停在「設定」分頁，依序完成：
 
-1. **AI 服務**：點一個常用服務的按鈕，會自動填好網址。填入 API key，按「讀取模型清單」選模型，按「測試連線」確認能用。
+1. **AI 服務**：點一個常用服務的按鈕，會自動填好網址。填入 API key，按「讀取模型清單」選模型，再按「測試連線」確認能用。
 2. **面試資訊**：每個要面試的學校系所填一筆，包括全名、簡稱和面試日期。「口試形式與重點」可以貼簡章上的口試說明。「口徑提醒」寫你自己知道、但資料上看不出來的規則，例如「競賽只講佳作，不講名次」。
 3. **上傳資料**：
    - **審查資料**：你實際交給學校的文件，委員看得到，題目從這裡出。
@@ -53,17 +69,17 @@ python -m venv .venv
 
 ## AI 服務設定參考
 
-| 服務 | 介面類型 | API 網址 |
-|---|---|---|
-| OpenAI | OpenAI 相容 | `https://api.openai.com/v1` |
-| Google Gemini | OpenAI 相容 | `https://generativelanguage.googleapis.com/v1beta/openai/` |
-| DeepSeek | OpenAI 相容 | `https://api.deepseek.com` |
-| OpenRouter | OpenAI 相容 | `https://openrouter.ai/api/v1` |
-| LM Studio（本機） | OpenAI 相容 | `http://localhost:1234/v1` |
-| Ollama（本機） | OpenAI 相容 | `http://localhost:11434/v1` |
-| Anthropic（Claude） | Anthropic | 留空 |
+| 服務 | 介面類型 | API 網址 | 網頁版可用 |
+|---|---|---|---|
+| OpenAI | OpenAI 相容 | `https://api.openai.com/v1` | ✓ |
+| Google Gemini | OpenAI 相容 | `https://generativelanguage.googleapis.com/v1beta/openai/` | ✓ |
+| DeepSeek | OpenAI 相容 | `https://api.deepseek.com` | ✓ |
+| OpenRouter | OpenAI 相容 | `https://openrouter.ai/api/v1` | ✓ |
+| Anthropic（Claude） | Anthropic | 留空 | ✓ |
+| LM Studio（本機） | OpenAI 相容 | `http://localhost:1234/v1` | 只有 Python 版 |
+| Ollama（本機） | OpenAI 相容 | `http://localhost:11434/v1` | 只有 Python 版 |
 
-模型名稱各家不同，而且常常更新。按「讀取模型清單」就能列出你的帳號可用的模型。Anthropic 預設填 `claude-opus-5-5`，「思考深度」預設 high，這兩個欄位都可以改。
+模型名稱各家不同，而且常常更新。按「讀取模型清單」就能列出你的帳號可用的模型。選 Anthropic 時，模型預設填 `claude-opus-5-5`、思考深度預設 high，兩個都可以改。
 
 **本機模型的建議設定**：在 LM Studio 載入模型時，把 context length 調到 16384 以上；在本工具把「一次最多送給 AI 的字數」設為 8000，選本機服務的按鈕時會自動填好。審查資料超過這個字數時，批改只會送這題相關的段落。
 
@@ -71,18 +87,26 @@ python -m venv .venv
 
 ## 費用與隱私
 
-- **資料存放**：設定、API key、上傳的資料、題庫、練習紀錄全部存在專案的 `data/` 資料夾，不會上傳到任何地方，也已經排除在 git 之外。要備份就複製這個資料夾；刪掉它就能重新開始。
 - **送給 AI 的內容**：出題和批改時，你的審查資料與回答會送到你選的 AI 服務，請先確認你接受該服務的資料政策。用本機模型的話，資料完全不會離開你的電腦。
+- **沒有我們的伺服器**：網頁版只是一個靜態網頁，資料存在你的瀏覽器、直接送到你選的 AI 服務，不會經過任何其他地方。Python 版的伺服器只接受本機連線（`127.0.0.1`）。
 - **自動遮蔽**：上傳時會把 Email、手機與市話號碼、身分證字號換成「〔已遮蔽〕」。姓名、學號不會遮，介意的話請在上傳前自己刪掉。
+- **備份檔**：包含上傳的資料、題庫和練習紀錄，不含 AI 設定與 API key。備份檔裡有你的審查資料全文，請像對待原始文件一樣保管。
 - **費用**：每次批改都會附上該校的審查資料全文（超過字數上限時改送相關段落）。用 Anthropic 時會自動啟用提示快取，重複送出的資料費用較低。
-- **只接受本機連線**：伺服器只聽 `127.0.0.1`，同一個網路裡的其他裝置連不進來。
 
 ## 常見問題
 
-- **啟動時說埠號已被使用**：有別的程式占用了 8765，改用 `run.py --port 8800` 之類的其他埠號。
+- **手機和電腦的資料不一樣**：網頁版的資料存在各自的瀏覽器裡。在一邊匯出備份檔，到另一邊匯入即可。
+- **網頁版顯示「連不上 AI 服務」**：先確認網路與 API 網址。有些服務不允許網頁直接呼叫，這種情況請改用 Python 版。
+- **Python 版啟動時說埠號已被使用**：有別的程式占用了 8765，改用 `run.py --port 8800` 之類的其他埠號。
 - **PDF 上傳後顯示「幾乎讀不到文字」**：那是掃描檔，請改傳 Word 檔或可以選取文字的 PDF。
 - **出題時有幾段「沒出成功」**：多半是模型回傳的格式跑掉了，本機小模型比較常發生。按「重新產生題庫」再試一次，或換一個較大的模型。
-- **怎麼用說的回答**：用作業系統內建的語音輸入。Windows 按 `Windows 鍵＋H`，Mac 按兩下 `Fn`。答案框一出現字就會自動開始計時。
+- **怎麼用說的回答**：用作業系統內建的語音輸入。手機按鍵盤上的麥克風；Windows 按 `Windows 鍵＋H`；Mac 按兩下 `Fn`。答案框一出現字就會自動開始計時。
+
+## 給開發者
+
+- 畫面只有一份（`web/`）。頁面打開時會先找本機伺服器：找得到就用 Python 後端（`app/`），找不到就用 `web/backend.js` 在瀏覽器裡處理。兩個後端的 API 路由一一對應。
+- 出題與批改的提示詞都在 `web/prompts.json`，兩個後端共用。改流程時，`app/server.py` 和 `web/backend.js` 要一起改。
+- 推上 `main` 後，`.github/workflows/pages.yml` 會把 `web/` 發布到 GitHub Pages。
 
 ## 授權
 

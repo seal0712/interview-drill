@@ -123,3 +123,4 @@ ul.fix .done span { text-decoration: line-through; color: var(--muted); }
 .progress i { display: block; height: 100%; background: var(--accent); }
 .tab:disabled { opacity: .4; cursor: not-allowed; }
 .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+@media (max-width: 380px) { .tab { padding: 8px 6px; font-size: 14px; } }

@@ -13,7 +13,8 @@ from .extract import extract
 
 WEB = os.path.join(store.ROOT, "web")
 MAX_FOLLOW = 2   # 第一次回答之後最多追問 2 次，而且每次都由考生自己選擇要不要回答
-TYPES = {".html": "text/html", ".js": "text/javascript", ".css": "text/css", ".svg": "image/svg+xml"}
+TYPES = {".html": "text/html", ".js": "text/javascript", ".css": "text/css", ".svg": "image/svg+xml", ".json": "application/json"}
+BACKUP_KEYS = ("profile", "docs", "bank", "progress", "attempts")   # 備份檔不含 AI 設定與 API key
 
 JOB = {"running": False, "done": 0, "total": 0, "message": "", "error": "", "warnings": []}
 
@@ -53,7 +54,7 @@ def save_config(body):
 
 
 def test_ai(_):
-    text, model = ai.chat(store.load("config"), "", [{"role": "user", "content": "請只回覆「連線成功」四個字。"}], max_tokens=2000)
+    text, model = ai.chat(store.load("config"), "", [{"role": "user", "content": prompts.T["test"]}], max_tokens=2000)
     return {"reply": text[:200], "model": model}
 
 
@@ -103,6 +104,20 @@ def delete_question(body):
         s["qs"] = [x for x in s["qs"] if x != body["id"]]
     store.save("bank", bank)
     return {"bank": bank}
+
+
+def export_data(_):
+    return {"app": "interview-drill", "version": 1, "exported_at": now(), **{k: store.load(k) for k in BACKUP_KEYS}}
+
+
+def import_data(body):
+    data = body.get("data") or {}
+    if data.get("app") != "interview-drill":
+        raise ValueError("這不是面試練習工具的備份檔。")
+    for k in BACKUP_KEYS:
+        if k in data:
+            store.save(k, data[k])
+    return {}
 
 
 def list_models(_):
@@ -252,7 +267,8 @@ def grade(body):
 ROUTES = {"/api/config": save_config, "/api/test-ai": test_ai, "/api/models": list_models,
           "/api/profile": save_profile, "/api/docs/upload": upload, "/api/docs/delete": delete_doc,
           "/api/generate": generate, "/api/grade": grade, "/api/progress": save_progress,
-          "/api/attempt": save_attempt, "/api/questions/delete": delete_question}
+          "/api/attempt": save_attempt, "/api/questions/delete": delete_question,
+          "/api/export": export_data, "/api/import": import_data}
 
 
 class Handler(BaseHTTPRequestHandler):
