@@ -1,0 +1,8 @@
+# 使用者資料（設定、API key、上傳的審查資料、題庫、練習紀錄）一律不進 git
+data/
+.venv/
+__pycache__/
+_tmp/
+.env
+~$*
+*.tmp

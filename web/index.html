@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>面試練習工具</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&family=LXGW+WenKai+TC:wght@400;700&family=Noto+Sans+TC:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <h1>面試練習工具</h1>
+    <div class="dates" id="dates"></div>
+    <p class="hint" id="topHint"></p>
+  </header>
+  <nav class="tabs" role="tablist">
+    <button class="tab" role="tab" id="tab-read" aria-selected="false">讀資料</button>
+    <button class="tab" role="tab" id="tab-practice" aria-selected="false">抽題練習</button>
+    <button class="tab" role="tab" id="tab-review" aria-selected="false">錯題本</button>
+    <button class="tab" role="tab" id="tab-bank" aria-selected="false">題庫</button>
+    <button class="tab" role="tab" id="tab-setup" aria-selected="false">設定</button>
+  </nav>
+  <div class="filters" id="filters">
+    <div class="seg" id="school"></div>
+    <select id="cat" aria-label="題目類別"></select>
+    <label class="chk"><input type="checkbox" id="onlyStuck"> 只抽卡住的</label>
+  </div>
+  <div class="stats" id="stats"></div>
+  <section id="view-read" hidden></section>
+  <section id="view-practice" hidden></section>
+  <section id="view-review" hidden></section>
+  <section id="view-bank" hidden></section>
+  <section id="view-setup" hidden></section>
+</div>
+<script src="app.js"></script>
+</body>
+</html>
